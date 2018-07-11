@@ -1,0 +1,10 @@
+<properties>
+
+    <property id="ForegroundColor" type="number">0xFFFFFF</property>
+    <property id="LeftBarInfo" type="number">0</property>
+    <property id="RightBarInfo" type="number">3</property>
+    <property id="ShowMoveBars" type="boolean">false</property>
+    <property id="ShowSteps" type="boolean">true</property>
+    <property id="ShowStepsIcon" type="boolean">true</property>
+
+</properties>

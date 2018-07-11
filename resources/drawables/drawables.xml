@@ -1,0 +1,16 @@
+<drawables>
+    <bitmap id="LauncherIcon" filename="images/launcher_icon.png" />
+    <bitmap id="id_alarm" filename="images/alarm.png" />
+    <bitmap id="id_battery" filename="images/BatteryOutlineTransparent.png" />
+    <bitmap id="id_batteryCharging" filename="images/BatteryChargingOutlineTransparent.png" />
+    <bitmap id="id_moveBarBig" filename="images/MoveBarBig.png" />
+    <bitmap id="id_moveBarSmall" filename="images/MoveBarSmall.png" />
+    <bitmap id="id_notification" filename="images/notification.png" />
+    <bitmap id="id_phone" filename="images/phone.png" />
+    <bitmap id="id_stair" filename="images/stairs.png" />
+    <bitmap id="id_star1" filename="images/star1.png" />
+    <bitmap id="id_star2" filename="images/star2.png" />
+    <bitmap id="id_star3" filename="images/star3.png" />
+    <bitmap id="id_sleep" filename="images/sleep.png" />
+    <bitmap id="id_steps" filename="images/steps.png" />
+</drawables>
