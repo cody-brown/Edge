@@ -36,7 +36,7 @@ class EdgeView extends Ui.WatchFace {
 	var notificationBitmap;
 	var phoneBitmap;
 	var sleepBitmap;
-	var stairBitmap;
+	//var stairBitmap;
 	var star1Bitmap;
 	var star2Bitmap;
 	var star3Bitmap;
@@ -73,7 +73,7 @@ class EdgeView extends Ui.WatchFace {
 		notificationBitmap = Ui.loadResource( Rez.Drawables.id_notification );
 		phoneBitmap = Ui.loadResource( Rez.Drawables.id_phone );
 		sleepBitmap = Ui.loadResource( Rez.Drawables.id_sleep );
-		stairBitmap = Ui.loadResource( Rez.Drawables.id_stair );
+		//stairBitmap = Ui.loadResource( Rez.Drawables.id_stair );
 		star1Bitmap = Ui.loadResource( Rez.Drawables.id_star1 );
 		star2Bitmap = Ui.loadResource( Rez.Drawables.id_star2 );
 		star3Bitmap = Ui.loadResource( Rez.Drawables.id_star3 );
