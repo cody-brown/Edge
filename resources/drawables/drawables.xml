@@ -16,6 +16,22 @@
             <color>FFFFFF</color>
         </palette>
     </bitmap>
+    <bitmap id="id_heart" filename="images/heart.png" dithering="none" >
+        <palette disableTransparency="true">
+            <color>FFFFFF</color>
+            <color>AAAAAA</color>
+            <color>555555</color>
+            <color>000000</color>
+        </palette>
+    </bitmap>
+    <bitmap id="id_intensity" filename="images/intensity.png" dithering="none" >
+        <palette disableTransparency="true">
+            <color>FFFFFF</color>
+            <color>AAAAAA</color>
+            <color>555555</color>
+            <color>000000</color>
+        </palette>
+    </bitmap>
     <bitmap id="id_moveBarBig" filename="images/MoveBarBig.png" dithering="none" >
         <palette disableTransparency="true">
             <color>FF0000</color>
@@ -47,6 +63,8 @@
     <bitmap id="id_stair" filename="images/stairs.png" dithering="none" >
         <palette disableTransparency="true">
             <color>FFFFFF</color>
+            <color>AAAAAA</color>
+            <color>555555</color>
             <color>000000</color>
         </palette>
     </bitmap>
@@ -82,8 +100,9 @@
     </bitmap>
     <bitmap id="id_steps" filename="images/steps.png" dithering="none" >
         <palette disableTransparency="true">
-            <color>00FFFF</color>
-            <color>005555</color>
+            <color>FFFFFF</color>
+            <color>AAAAAA</color>
+            <color>555555</color>
             <color>000000</color>
         </palette>
     </bitmap>

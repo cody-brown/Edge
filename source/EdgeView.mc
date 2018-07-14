@@ -19,24 +19,27 @@ class EdgeView extends Ui.WatchFace {
 	}
 	
 	enum {
-        BAR_BATTERY,
-        BAR_STAIRS,
-        BAR_INTENSITY,
-        BAR_STEPS,
+        DATA_BATTERY,
+        DATA_STAIRS,
+        DATA_INTENSITY,
+        DATA_STEPS,
+        DATA_HR,
         
-        BAR_NONE = 100
+        DATA_NONE = 100
     }
 	
 	//Bitmaps
 	var alarmBitmap;
 	var batteryBitmap;
 	var batteryChargingBitmap;
+	var heartBitmap;
+	var intensityBitmap;
 	var moveBarBigBitmap;
 	var moveBarSmallBitmap;
 	var notificationBitmap;
 	var phoneBitmap;
 	var sleepBitmap;
-	//var stairBitmap;
+	var stairBitmap;
 	var star1Bitmap;
 	var star2Bitmap;
 	var star3Bitmap;
@@ -68,12 +71,14 @@ class EdgeView extends Ui.WatchFace {
 		alarmBitmap = Ui.loadResource( Rez.Drawables.id_alarm );
 		batteryBitmap = Ui.loadResource( Rez.Drawables.id_battery );
 		batteryChargingBitmap = Ui.loadResource( Rez.Drawables.id_batteryCharging );
-		moveBarBigBitmap = Ui.loadResource( Rez.Drawables.id_moveBarBig );
+        heartBitmap = Ui.loadResource( Rez.Drawables.id_heart );
+        intensityBitmap = Ui.loadResource( Rez.Drawables.id_intensity );
+        moveBarBigBitmap = Ui.loadResource( Rez.Drawables.id_moveBarBig );
 		moveBarSmallBitmap = Ui.loadResource( Rez.Drawables.id_moveBarSmall );
 		notificationBitmap = Ui.loadResource( Rez.Drawables.id_notification );
 		phoneBitmap = Ui.loadResource( Rez.Drawables.id_phone );
 		sleepBitmap = Ui.loadResource( Rez.Drawables.id_sleep );
-		//stairBitmap = Ui.loadResource( Rez.Drawables.id_stair );
+		stairBitmap = Ui.loadResource( Rez.Drawables.id_stair );
 		star1Bitmap = Ui.loadResource( Rez.Drawables.id_star1 );
 		star2Bitmap = Ui.loadResource( Rez.Drawables.id_star2 );
 		star3Bitmap = Ui.loadResource( Rez.Drawables.id_star3 );
@@ -110,7 +115,7 @@ class EdgeView extends Ui.WatchFace {
         locUpperY -= drawBattery(dc, locUpperY, ALIGN_BOT)[1];
 		
 		locLowerY += drawHistory(dc, locLowerY, ALIGN_TOP)[1];
-		locLowerY += drawActInfo(dc, locLowerY, ALIGN_TOP, dc.getWidth() / 2, ALIGN_MID)[1];
+		locLowerY += drawDataField(dc, locLowerY, ALIGN_TOP, dc.getWidth() / 2, ALIGN_MID)[1];
 		
 		drawMoveBars(dc, dc.getHeight(), ALIGN_BOT);
 		drawBars(dc);
@@ -226,28 +231,6 @@ class EdgeView extends Ui.WatchFace {
 			}
 			
 		} else if( Sys.SCREEN_SHAPE_ROUND == devSettings.screenShape ) {
-//			//Get dimensions -- draw on top
-//			var smallStart = 88;
-//			var smallSize = 9;
-//			var smallSpace = 4;
-//			var bigEnd = 92;
-//			var bigStart = bigEnd + (smallSpace + smallSize) * 4 - smallSpace;
-//	
-//			dc.setColor(Gfx.COLOR_RED, Gfx.COLOR_TRANSPARENT);
-//			
-//			//Draw move bars based on the activity level
-//	        if( actInfo.moveBarLevel > 0 ) {
-//				for( var i = 0; i < BAR_WIDTH; i++ ) {
-//					dc.drawArc(dc.getWidth() / 2 - 1, dc.getHeight() / 2, dc.getWidth() / 2 - BAR_WIDTH + i - BAR_WIDTH, Gfx.ARC_CLOCKWISE, bigStart, bigEnd );
-//				}
-//	        
-//			}
-//			for( var bar = 1; bar < actInfo.moveBarLevel; bar++ ) {
-//				for( var i = 0; i < BAR_WIDTH; i++ ) {
-//					dc.drawArc(dc.getWidth() / 2, dc.getHeight() / 2, dc.getWidth() / 2 - BAR_WIDTH + i - BAR_WIDTH, Gfx.ARC_CLOCKWISE, smallStart, smallStart - smallSize);
-//				}
-//				smallStart -= smallSize + smallSpace;
-//			}
 			//Get dimensions
 			var smallStart = 178;
 			var smallSize = 9;
@@ -329,42 +312,42 @@ class EdgeView extends Ui.WatchFace {
             rightBarPercentage = actInfo.steps * 1.0 / actInfo.stepGoal;
         } else {
             rightBarPercentage = 0.0;
-            leftBarInfo = BAR_BATTERY;
+            leftBarInfo = DATA_BATTERY;
         }
 		
 		//Make sure bars are valid, else default to none. Setup color and percentages
-		if( BAR_BATTERY == leftBarInfo ) { //Batery
+		if( DATA_BATTERY == leftBarInfo ) { //Batery
             leftBarPercentage = sysStats.battery / 100.0;
             leftBarColor = Gfx.COLOR_GREEN;
             
             if( sysStats.battery < LOW_BATT_PERCENTAGE ) {
                 leftBarColor = Gfx.COLOR_YELLOW;
             }
-        } else if( BAR_STAIRS == leftBarInfo && ( Act.Info has :floorsClimbed ) ) { //Stairs Climbed
+        } else if( DATA_STAIRS == leftBarInfo && ( Act.Info has :floorsClimbed ) ) { //Stairs Climbed
             leftBarColor = Gfx.COLOR_PURPLE;
             leftBarPercentage = actInfo.floorsClimbed * 1.0 / actInfo.floorsClimbedGoal;
-        } else if( BAR_INTENSITY == leftBarInfo && ( Act.Info has :activeMinutesWeek ) ) { //Active/Intensity Minutes
+        } else if( DATA_INTENSITY == leftBarInfo && ( Act.Info has :activeMinutesWeek ) ) { //Active/Intensity Minutes
             leftBarColor = Gfx.COLOR_ORANGE;
             leftBarPercentage = actInfo.activeMinutesWeek.total * 1.0 / actInfo.activeMinutesWeekGoal;
-		} else if( BAR_STEPS == leftBarInfo && devSettings.activityTrackingOn ) { //Stairs
+		} else if( DATA_STEPS == leftBarInfo && devSettings.activityTrackingOn ) { //Stairs
             leftBarPercentage = actInfo.steps * 1.0 / actInfo.stepGoal;
             leftBarColor = Gfx.COLOR_BLUE;
         }
 
-        if( BAR_BATTERY == rightBarInfo ) { //Batery
+        if( DATA_BATTERY == rightBarInfo ) { //Batery
             rightBarPercentage = sysStats.battery / 100.0;
             rightBarColor = Gfx.COLOR_GREEN;
             
             if( sysStats.battery < LOW_BATT_PERCENTAGE ) {
                 rightBarColor = Gfx.COLOR_YELLOW;
             }
-        } else if( BAR_STAIRS == rightBarInfo && ( Act.Info has :floorsClimbed ) ) { //Stairs Climbed
+        } else if( DATA_STAIRS == rightBarInfo && ( Act.Info has :floorsClimbed ) ) { //Stairs Climbed
             rightBarColor = Gfx.COLOR_PURPLE;
             rightBarPercentage = actInfo.floorsClimbed * 1.0 / actInfo.floorsClimbedGoal;
-        } else if( BAR_INTENSITY == rightBarInfo && ( Act.Info has :activeMinutesWeek ) ) { //Active/Intensity Minutes
+        } else if( DATA_INTENSITY == rightBarInfo && ( Act.Info has :activeMinutesWeek ) ) { //Active/Intensity Minutes
             rightBarColor = Gfx.COLOR_ORANGE;
             rightBarPercentage = actInfo.activeMinutesWeek.total * 1.0 / actInfo.activeMinutesWeekGoal;
-        } else if( BAR_STEPS == rightBarInfo && devSettings.activityTrackingOn ) { //Stairs
+        } else if( DATA_STEPS == rightBarInfo && devSettings.activityTrackingOn ) { //Stairs
             rightBarPercentage = actInfo.steps * 1.0 / actInfo.stepGoal;
             rightBarColor = Gfx.COLOR_BLUE;
         }
@@ -585,40 +568,63 @@ class EdgeView extends Ui.WatchFace {
 		return [retWidth, retHeight];
 	}
 	
-	function drawActInfo(dc, locY, alignmentY, locX, alignmentX) {
-//		var font = Gfx.FONT_XTINY;
-//		var text = actInfo.steps.toString();
-//		var retWidth = max([dc.getTextWidthInPixels(text, font), stepBitmap.getWidth()]);
-//		var retHeight = stepBitmap.getHeight() + Gfx.getFontHeight(font);
-//		
-//		//Align Y
-//		if( ALIGN_MID == alignmentY ) {
-//			locY -= retHeight / 2;
-//		} else if( ALIGN_BOT == alignmentY ) {
-//			locY -= retHeight;
-//		}
-//		
-//		//Align X - Align to center
-//		if( ALIGN_LEFT == alignmentX ) {
-//			locX += retWidth / 2;
-//		} else if( ALIGN_RIGHT == alignmentX ) {
-//			locX -= retWidth / 2;
-//		}
-//		
-//		dc.drawBitmap(locX - stepBitmap.getWidth() / 2, locY, stepBitmap);
-//		locY += stepBitmap.getHeight();
-//		dc.drawText(locX, locY, font, text, Gfx.TEXT_JUSTIFY_CENTER);
-        if( !App.getApp().getProperty("ShowSteps") || !devSettings.activityTrackingOn ) {
+	function drawDataField(dc, locY, alignmentY, locX, alignmentX) {
+        var dataFieldInfo = App.getApp().getProperty("DataFieldInfo");
+        var iconBitmap = null;
+
+        if( ( DATA_STAIRS    == dataFieldInfo && !( Act.Info has :floorsClimbed )        ) || 
+            ( DATA_STEPS     == dataFieldInfo && !devSettings.activityTrackingOn         ) || 
+            ( DATA_INTENSITY == dataFieldInfo && !( Act.Info has :activeMinutesWeek )    ) ||
+            ( DATA_HR        == dataFieldInfo && !( Act has :HeartRateSample )           ) ||
+            ( DATA_NONE      == dataFieldInfo ) ) {
             return [0, 0];
         }
 
-		var font = Gfx.FONT_XTINY;
-		var text = " " + actInfo.steps.toString();
+		var font = Gfx.FONT_SMALL;
+		var text = App.getApp().getProperty("ShowDataFieldIcon") ? " " : ""; //Pad with space if using icon
 		
-		var retWidth = dc.getTextWidthInPixels(text, font) + (App.getApp().getProperty("ShowStepsIcon") ? stepBitmap.getWidth() : 0);
-		var retHeight = max([stepBitmap.getHeight(),Gfx.getFontAscent(font)]);
+		switch( dataFieldInfo ) {
+            case DATA_STAIRS:
+                text += actInfo.floorsClimbed.toString();
+                iconBitmap = stairBitmap;
+                break;
+                
+            case DATA_STEPS:
+                text += actInfo.steps;
+                iconBitmap = stepBitmap;
+                break;
+                
+            case DATA_INTENSITY:
+                text += actInfo.activeMinutesWeek.total;
+                iconBitmap = intensityBitmap;
+                break;
+                
+            case DATA_HR:
+                var oneMinute = new Time.Duration(60);
+                var hrIterator = ActivityMonitor.getHeartRateHistory(1, true);
+
+                var hr = hrIterator.next();
+                //If the sample is valid and from the last minute, display it
+                if( hr != null && hr.heartRate != Act.INVALID_HR_SAMPLE && Time.now().lessThan(hr.when.add(oneMinute)) ) {
+                    text += hr.heartRate.toString();
+                } else {
+                    text += "--";
+                }
+                iconBitmap = heartBitmap;
+                break;
+                
+            default:
+                return [0, 0];
+		}
 		
-		dc.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_TRANSPARENT);
+		if( !App.getApp().getProperty("ShowDataFieldIcon") ) {
+            iconBitmap = null;
+        }
+        
+		var retWidth = dc.getTextWidthInPixels(text, font) + (iconBitmap != null ? iconBitmap.getWidth() : 0);
+		var retHeight = max([(iconBitmap == null ? 0 : iconBitmap.getHeight()),Gfx.getFontHeight(font)]);
+		
+		dc.setColor(fgColor, Gfx.COLOR_TRANSPARENT);
 		
 		//Align Y
 		if( ALIGN_MID == alignmentY ) {
@@ -634,15 +640,15 @@ class EdgeView extends Ui.WatchFace {
 			locX -= retWidth / 2;
 		}
 		
-		if(App.getApp().getProperty("ShowStepsIcon")) {
-            dc.drawBitmap(locX - retWidth / 2, locY, stepBitmap);
+		if(iconBitmap != null) {
+            dc.drawBitmap(locX - retWidth / 2, locY + retHeight / 2 - iconBitmap.getHeight() / 2, iconBitmap);
         }
         
-		var centerY = locY + stepBitmap.getHeight() / 2;
+		var centerY = locY + retHeight / 2;
 		dc.drawText(locX + retWidth / 2, centerY, font, text, Gfx.TEXT_JUSTIFY_RIGHT | Gfx.TEXT_JUSTIFY_VCENTER);
 		
 		return [retWidth, retHeight];
-	} /* drawActInfo() */
+	} /* drawDataField() */
 	
 	function max(numbers) {
 		var max = numbers[0];

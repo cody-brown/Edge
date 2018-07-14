@@ -42,11 +42,17 @@
         <settingConfig type="boolean" />
     </setting>
 
-    <setting propertyKey="@Properties.ShowSteps" title="@Strings.ShowStepsTitle">
-        <settingConfig type="boolean" />
+    <setting propertyKey="@Properties.DataFieldInfo" title="@Strings.ShowDataFieldInfoTitle">
+        <settingConfig type="list">
+            <listEntry value="1">@Strings.StairsClimbed</listEntry>
+            <listEntry value="2">@Strings.IntensityMinutes</listEntry>
+            <listEntry value="3">@Strings.Steps</listEntry>
+            <listEntry value="4">@Strings.HeartRate</listEntry>
+            <listEntry value="100">@Strings.None</listEntry>
+        </settingConfig>
     </setting>
 
-    <setting propertyKey="@Properties.ShowStepsIcon" title="@Strings.ShowStepsIconTitle">
+    <setting propertyKey="@Properties.ShowDataFieldIcon" title="@Strings.ShowDataFieldIconTitle">
         <settingConfig type="boolean" />
     </setting>
 
