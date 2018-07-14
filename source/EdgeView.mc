@@ -184,7 +184,7 @@ class EdgeView extends Ui.WatchFace {
             //Adjust for seconds being included
             var secondString = clockTime.sec.format("%02d");
 
-            secDimension = dc.getTextDimensions("88", secFont); //Do 88 to make sure we can handle larger width numbers
+            secDimension = dc.getTextDimensions(" 88", secFont); //Do 88 to make sure we can handle larger width numbers
             secDimension[0] += secSpace;
             retWidth = timeDim[0] + secDimension[0];
             locX = dc.getWidth() / 2 - retWidth / 2 + timeDim[0] / 2; //Uncomment to center
@@ -385,20 +385,30 @@ class EdgeView extends Ui.WatchFace {
             if( leftArcEnd != 270 ) {
                 for( var i = 0; i < BAR_WIDTH + 1; i++ ) {
                     dc.setColor(leftBarColor, Gfx.COLOR_TRANSPARENT);
-                    dc.drawArc(dc.getWidth() / 2, dc.getHeight() / 2, dc.getWidth() / 2 - BAR_WIDTH + i + 1, Gfx.ARC_CLOCKWISE, 270, leftArcEnd );
+                    if( leftArcEnd >= 180 ) {
+                        dc.drawArc(dc.getWidth() / 2, dc.getHeight() / 2 - 1, dc.getWidth() / 2 - BAR_WIDTH + i + 1, Gfx.ARC_CLOCKWISE, 270, leftArcEnd );
+                    } else {
+                        dc.drawArc(dc.getWidth() / 2, dc.getHeight() / 2 - 1, dc.getWidth() / 2 - BAR_WIDTH + i + 1, Gfx.ARC_CLOCKWISE, 270, 180 ); //Bottom half
+                        dc.drawArc(dc.getWidth() / 2, dc.getHeight() / 2, dc.getWidth() / 2 - BAR_WIDTH + i + 1, Gfx.ARC_CLOCKWISE, 180, leftArcEnd ); //Top half
+                    }
                 }
             }
 
             //Draw right bar
-            var rightBarArcEnd = (180 * rightBarPercentage + 270).toNumber();
-            if( rightBarArcEnd > 270 + 180 ) {
-                rightBarArcEnd = 450;
+            var rightArcEnd = (180 * rightBarPercentage + 270).toNumber();
+            if( rightArcEnd > 270 + 180 ) {
+                rightArcEnd = 450;
             }
 
-            if( rightBarArcEnd != 270 ) {
+            if( rightArcEnd != 270 ) {
                 for( var i = 0; i < BAR_WIDTH + 1; i++ ) {
                     dc.setColor(rightBarColor, Gfx.COLOR_TRANSPARENT);
-                    dc.drawArc(dc.getWidth() / 2 - 1, dc.getHeight() / 2, dc.getWidth() / 2 - BAR_WIDTH + i + 1, Gfx.ARC_COUNTER_CLOCKWISE, 270, rightBarArcEnd );
+                    if( rightArcEnd <= 360 ) {
+                        dc.drawArc(dc.getWidth() / 2 - 1, dc.getHeight() / 2 - 1, dc.getWidth() / 2 - BAR_WIDTH + i + 1, Gfx.ARC_COUNTER_CLOCKWISE, 270, rightArcEnd );
+                    } else {
+                        dc.drawArc(dc.getWidth() / 2 - 1, dc.getHeight() / 2 - 1, dc.getWidth() / 2 - BAR_WIDTH + i + 1, Gfx.ARC_COUNTER_CLOCKWISE, 270, 360 ); //Bottom half
+                        dc.drawArc(dc.getWidth() / 2 - 1, dc.getHeight() / 2, dc.getWidth() / 2 - BAR_WIDTH + i + 1, Gfx.ARC_COUNTER_CLOCKWISE, 360, rightArcEnd ); //Top half
+                    }
                 }
             }
         }
@@ -491,10 +501,12 @@ class EdgeView extends Ui.WatchFace {
 
     function drawHistory(dc, locY, alignment) {
         var spacer = 2;
-        var numDays = 6;
-        var textFont = Gfx.FONT_XTINY;
+        var numDays = 7;
         var retWidth = 0;
         var retHeight = 0;
+        var useDots = !App.getApp().getProperty("ShowHistoryPercentages");
+
+        var percColor = [Gfx.COLOR_DK_RED, Gfx.COLOR_RED, Gfx.COLOR_ORANGE, Gfx.COLOR_YELLOW, Gfx.COLOR_GREEN];
 
         //Align
         if( ALIGN_MID == alignment ) {
@@ -506,13 +518,21 @@ class EdgeView extends Ui.WatchFace {
         var date = Cal.info( Time.now(), Time.FORMAT_SHORT );
         var dayOfWeek = date.day_of_week;
 
-        dc.setColor( Gfx.COLOR_WHITE, Gfx.COLOR_TRANSPARENT );
+        dc.setColor( fgColor, Gfx.COLOR_TRANSPARENT );
 
+        var textFont = Gfx.FONT_XTINY;
         var textDim = dc.getTextDimensions( "98%", textFont );
         textDim[1] -= Gfx.getFontDescent(textFont);
 
-        var spacePerDay = ( star3Bitmap.getWidth() > textDim[0] ) ? star3Bitmap.getWidth() + spacer : textDim[0] + spacer;
+        var spacePerDay;
 
+        if( useDots ) {
+            spacePerDay = star3Bitmap.getWidth() + spacer;
+        } else {
+            spacePerDay = ( star3Bitmap.getWidth() > textDim[0] ) ? star3Bitmap.getWidth() + spacer : textDim[0] + spacer;
+         }
+
+        //Figure out how much space we have to do history, and limit days accordingly
         if( Sys.SCREEN_SHAPE_ROUND == devSettings.screenShape ) {
             var radius = dc.getWidth() / 2 - (BAR_WIDTH - 1);
             var offset = ( locY > radius ) ? locY + star3Bitmap.getHeight() + Gfx.getFontAscent(textFont) - radius : radius - locY;
@@ -547,11 +567,18 @@ class EdgeView extends Ui.WatchFace {
             var percMidY = locY + percHeight / 2;
             var textY = locY + percHeight;
             var dayMidX = (dc.getWidth() - retWidth + spacePerDay) / 2;
+            var dotRadius = star3Bitmap.getWidth() / 2 - 3;
             retHeight = percHeight + textDim[1]; //TODO: Dont' have magic number
 
             for( var day = numDays - 1; day >= 0; day-- ) {
                 if( percents[day] < 100 ) {
-                    dc.drawText( dayMidX, percMidY, textFont, percents[day] + "%", Gfx.TEXT_JUSTIFY_CENTER | Gfx.TEXT_JUSTIFY_VCENTER);
+                    if( useDots ) {
+                        dc.setColor(percColor[percents[day]/(100/percColor.size())], Gfx.COLOR_TRANSPARENT); //Get dot color
+                        dc.fillCircle( dayMidX, percMidY, dotRadius );
+                        dc.setColor(fgColor, Gfx.COLOR_TRANSPARENT);
+                    } else {
+                        dc.drawText( dayMidX, percMidY, textFont, percents[day] + "%", Gfx.TEXT_JUSTIFY_CENTER | Gfx.TEXT_JUSTIFY_VCENTER);
+                    }
                 } else if(percents[day] >= 300) {
                     dc.drawBitmap( dayMidX - star3Bitmap.getWidth() / 2, percMidY - star3Bitmap.getHeight() / 2, star3Bitmap );
                 } else if(percents[day] >= 200) {

@@ -6,5 +6,6 @@
   <property id="ShowMoveBars" type="boolean">false</property>
   <property id="DataFieldInfo" type="number">3</property>
   <property id="ShowDataFieldIcon" type="boolean">true</property>
+  <property id="ShowHistoryPercentages" type="boolean">false</property>
 
 </properties>

@@ -9,6 +9,7 @@
   <string id="ShowDataFieldInfoTitle">Data Field</string>
   <string id="ShowDataFieldIconTitle">Show Data Field Icon?</string>
   <string id="ShowMoveBarsTitle">Show Move Bars?</string>
+  <string id="ShowHistoryPercentagesTitle">Show Percentages?</string>
 
   <!-- Color Options -->
   <string id="ColorWhite">White</string>
