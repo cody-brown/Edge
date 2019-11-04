@@ -10,6 +10,7 @@
   <string id="ShowDataFieldIconTitle">Show Data Field Icon?</string>
   <string id="ShowMoveBarsTitle">Show Move Bars?</string>
   <string id="ShowHistoryPercentagesTitle">Show Percentages?</string>
+  <string id="ShowSecondsTitle">Show Seconds?</string>
 
   <!-- Color Options -->
   <string id="ColorWhite">White</string>

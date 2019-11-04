@@ -7,6 +7,14 @@ using Toybox.Time.Gregorian as Cal;
 using Toybox.ActivityMonitor as Act;
 
 var partialUpdatesAllowed;
+var showSecondsSetting;
+var fgColor;
+var showMoveBars;
+var leftBarInfo;
+var rightBarInfo;
+var showHistoryPercentages;
+var dataFieldInfo;
+var showDataFieldIcon;
 
 class EdgeView extends Ui.WatchFace {
 
@@ -53,7 +61,6 @@ class EdgeView extends Ui.WatchFace {
     var secLocation = [0, 0];
     var secDimension = [0, 0];
     var secFont = Gfx.FONT_MEDIUM;
-    var fgColor;
 
     const BAR_WIDTH = 6;
     const LOW_BATT_PERCENTAGE = 20;
@@ -83,6 +90,15 @@ class EdgeView extends Ui.WatchFace {
         star2Bitmap = Ui.loadResource( Rez.Drawables.id_star2 );
         star3Bitmap = Ui.loadResource( Rez.Drawables.id_star3 );
         stepBitmap = Ui.loadResource( Rez.Drawables.id_steps );
+
+        showSecondsSetting = App.getApp().getProperty("ShowSeconds");
+        fgColor = App.getApp().getProperty("ForegroundColor");
+        showMoveBars = App.getApp().getProperty("ShowMoveBars");
+        leftBarInfo = App.getApp().getProperty("LeftBarInfo");
+        rightBarInfo = App.getApp().getProperty("RightBarInfo");
+        showHistoryPercentages = App.getApp().getProperty("ShowHistoryPercentages");
+        dataFieldInfo = App.getApp().getProperty("DataFieldInfo");
+        showDataFieldIcon = App.getApp().getProperty("ShowDataFieldIcon");
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -97,7 +113,6 @@ class EdgeView extends Ui.WatchFace {
         actInfo = Act.getInfo();
         sysStats = Sys.getSystemStats();
         devSettings = Sys.getDeviceSettings();
-        fgColor = App.getApp().getProperty("ForegroundColor");
 
         dc.clearClip();
 
@@ -179,7 +194,7 @@ class EdgeView extends Ui.WatchFace {
             locY -= timeDim[1];
         }
 
-        if( highPowerMode || partialUpdatesAllowed ) {
+        if( showSecondsSetting && ( highPowerMode || partialUpdatesAllowed ) ) {
             var secSpace = 4;
             //Adjust for seconds being included
             var secondString = clockTime.sec.format("%02d");
@@ -205,7 +220,7 @@ class EdgeView extends Ui.WatchFace {
         var retWidth = 0;
         var retHeight = 0;
 
-        if( !devSettings.activityTrackingOn || !App.getApp().getProperty("ShowMoveBars")) {
+        if( !devSettings.activityTrackingOn || !showMoveBars ) {
             return [retWidth, retHeight];
         }
 
@@ -301,11 +316,9 @@ class EdgeView extends Ui.WatchFace {
 
     function drawBars(dc) {
         var leftBarColor = Gfx.COLOR_TRANSPARENT;
-        var leftBarInfo = App.getApp().getProperty("LeftBarInfo");
         var leftBarPercentage = 0.0;
 
         var rightBarColor = Gfx.COLOR_TRANSPARENT;
-        var rightBarInfo = App.getApp().getProperty("RightBarInfo");
         var rightBarPercentage = 0.0;
 
         if( devSettings.activityTrackingOn ) {
@@ -493,7 +506,7 @@ class EdgeView extends Ui.WatchFace {
         }
 
         //Draw the date
-        dc.setColor(App.getApp().getProperty("ForegroundColor"), Gfx.COLOR_TRANSPARENT);
+        dc.setColor(fgColor, Gfx.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth() / 2, locY, dateFont, dateString, just);
 
         return dateDim;
@@ -504,7 +517,7 @@ class EdgeView extends Ui.WatchFace {
         var numDays = 7;
         var retWidth = 0;
         var retHeight = 0;
-        var useDots = !App.getApp().getProperty("ShowHistoryPercentages");
+        var useDots = !showHistoryPercentages;
 
         var percColor = [Gfx.COLOR_DK_RED, Gfx.COLOR_RED, Gfx.COLOR_ORANGE, Gfx.COLOR_YELLOW, Gfx.COLOR_GREEN];
 
@@ -596,7 +609,6 @@ class EdgeView extends Ui.WatchFace {
     }
 
     function drawDataField(dc, locY, alignmentY, locX, alignmentX) {
-        var dataFieldInfo = App.getApp().getProperty("DataFieldInfo");
         var iconBitmap = null;
 
         if( ( DATA_STAIRS    == dataFieldInfo && !( Act.Info has :floorsClimbed )        ) ||
@@ -608,7 +620,7 @@ class EdgeView extends Ui.WatchFace {
         }
 
         var font = Gfx.FONT_SMALL;
-        var text = App.getApp().getProperty("ShowDataFieldIcon") ? " " : ""; //Pad with space if using icon
+        var text = showDataFieldIcon ? " " : ""; //Pad with space if using icon
 
         switch( dataFieldInfo ) {
             case DATA_STAIRS:
@@ -644,7 +656,7 @@ class EdgeView extends Ui.WatchFace {
                 return [0, 0];
         }
 
-        if( !App.getApp().getProperty("ShowDataFieldIcon") ) {
+        if( !showDataFieldIcon ) {
             iconBitmap = null;
         }
 
@@ -691,14 +703,16 @@ class EdgeView extends Ui.WatchFace {
     var curClip;
     // Handle the partial update event
     function onPartialUpdate( dc ) {
-        var secondString = System.getClockTime().sec.format("%02d");
-
-        // Update the cliping rectangle to the new location of the second hand.
-        dc.setClip(secLocation[0], secLocation[1], secDimension[0] + 1, secDimension[1] + 1);
-
-        // Draw the second hand to the screen.
-        dc.setColor(fgColor, Graphics.COLOR_BLACK);
-        dc.drawText(secLocation[0], secLocation[1], secFont, secondString, Gfx.TEXT_JUSTIFY_LEFT);
+        if( showSecondsSetting ) {
+	        var secondString = System.getClockTime().sec.format("%02d");
+	
+	        // Update the cliping rectangle to the new location of the second hand.
+	        dc.setClip(secLocation[0], secLocation[1], secDimension[0] + 1, secDimension[1] + 1);
+	
+	        // Draw the second hand to the screen.
+	        dc.setColor(fgColor, Graphics.COLOR_BLACK);
+	        dc.drawText(secLocation[0], secLocation[1], secFont, secondString, Gfx.TEXT_JUSTIFY_LEFT);
+        }
    }
 }
 

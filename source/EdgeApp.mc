@@ -26,6 +26,15 @@ class EdgeApp extends App.AppBase {
 
     // New app settings have been received so trigger a UI update
     function onSettingsChanged() {
+        showSecondsSetting = App.getApp().getProperty("ShowSeconds");
+        fgColor = App.getApp().getProperty("ForegroundColor");
+        showMoveBars = App.getApp().getProperty("ShowMoveBars");
+        leftBarInfo = App.getApp().getProperty("LeftBarInfo");
+        rightBarInfo = App.getApp().getProperty("RightBarInfo");
+        showHistoryPercentages = App.getApp().getProperty("ShowHistoryPercentages");
+        dataFieldInfo = App.getApp().getProperty("DataFieldInfo");
+        showDataFieldIcon = App.getApp().getProperty("ShowDataFieldIcon");
+
         Ui.requestUpdate();
     }
 
